@@ -76,15 +76,11 @@ export function useMovies() {
       if (!searchText.trim()) return []
 
       ///api/movies?title=${searchText} 주소로 요청하면 영화 목록을 반환합니다.
-      const response = await fetch(
-        `/api/movies?title=${encodeURIComponent(searchText)}`
-      )
+      const response = await fetch(`/api/movies?title=${searchText}`)
       const data_fetch = await response.json()
 
       //데이터 패칭을 위해 fetch 함수 대신 axios 라이브러리를 사용합니다.
-      const { data } = await axios.get(
-        `/api/movies?title=${encodeURIComponent(searchText)}`
-      )
+      const { data } = await axios.get(`/api/movies?title=${searchText}`)
 
       //패칭 데이터의 Response 속성이 False인 경우, 함께 포함된 Error 속성의 값을 에러 메시지로 표시합니다.
       const movies = data.Search || []
