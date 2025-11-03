@@ -73,9 +73,14 @@ export function useMovies() {
     queryKey: ['movies', searchText],
     queryFn: async function () {
       //검색어가 없는 경우 빈 데이터([])를 반환합니다.
-      if (!searchText) return []
+      if (!searchText.trim()) return []
 
       ///api/movies?title=${searchText} 주소로 요청하면 영화 목록을 반환합니다.
+      const response = await fetch(
+        `/api/movies?title=${encodeURIComponent(searchText)}`
+      )
+      const data_fetch = await response.json()
+
       //데이터 패칭을 위해 fetch 함수 대신 axios 라이브러리를 사용합니다.
       const { data } = await axios.get(
         `/api/movies?title=${encodeURIComponent(searchText)}`
@@ -87,22 +92,14 @@ export function useMovies() {
         const errMsg = data.Error || 'No Results'
         setMessage(errMsg)
         throw new Error(errMsg)
-      } else {
-        if (movies.length === 0) {
-          setMessage('검색된 영화가 없습니다.')
-        } else {
-          setMessage('')
-        }
       }
-
       return movies
     },
 
     //데이터 캐싱 시간을 1시간으로 설정합니다.
     staleTime: 60 * 60 * 1000,
     //쿼리 실패 시 재시도(retry) 횟수를 1번으로 설정합니다.
-    retry: 1,
-    enabled: !!searchText,
-    initialData: []
+    retry: 1
+    //initialData: []
   })
 }
